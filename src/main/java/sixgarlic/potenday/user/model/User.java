@@ -1,4 +1,4 @@
-package sixgarlic.potenday.member.model;
+package sixgarlic.potenday.user.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,23 +13,31 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Member {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "user_id")
     private Long id;
 
     private String kakaoId;
 
-    private String role;
+    private String nickname;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private String authority;
+
+    @Enumerated
+    private UserStatus status;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> tests = new ArrayList<>();
 
     @Builder
-    public Member(String kakaoId, String role) {
+    public User(String kakaoId, String nickname, String authority, UserStatus status) {
         this.kakaoId = kakaoId;
-        this.role = role;
+        this.nickname = nickname;
+        this.authority = authority;
+        this.status = status;
     }
 }

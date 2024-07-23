@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import sixgarlic.potenday.member.model.Member;
+import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.travelroom.model.TravelRole;
 
 @Entity
@@ -24,7 +24,7 @@ public class MemberTravelType {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id")

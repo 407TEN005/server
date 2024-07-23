@@ -1,7 +1,7 @@
 package sixgarlic.potenday.test.model;
 
 import jakarta.persistence.*;
-import sixgarlic.potenday.member.model.Member;
+import sixgarlic.potenday.user.model.User;
 
 @Entity
 public class Test {
@@ -11,13 +11,11 @@ public class Test {
     @Column(name = "test_id")
     private Long id;
 
-    private String question;
-
     @Enumerated(EnumType.STRING)
     private AnswerType answer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
 }
