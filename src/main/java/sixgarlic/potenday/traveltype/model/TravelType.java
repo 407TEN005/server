@@ -2,6 +2,7 @@ package sixgarlic.potenday.traveltype.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,13 +12,20 @@ import lombok.NoArgsConstructor;
 public class TravelType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "type_id")
-    private Long id;
+    private String id;
 
     private String name;
 
     private String description;
 
     private String imageUrl;
+
+    @Builder
+    public TravelType(String id, String name, String description, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sixgarlic.potenday.test.model.FamilyRole;
 import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.traveltype.model.TravelType;
 
@@ -18,7 +19,7 @@ public class Travel {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,5 +31,5 @@ public class Travel {
     private TravelType travelType;
 
     @Enumerated(EnumType.STRING)
-    private TravelRole travelRole;
+    private FamilyRole familyRole;
 }
