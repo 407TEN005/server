@@ -1,9 +1,15 @@
 package sixgarlic.potenday.test.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import sixgarlic.potenday.user.model.User;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Test {
 
     @Id
@@ -12,10 +18,20 @@ public class Test {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private AnswerType answer;
+    private Answer answer;
+
+    @Enumerated(EnumType.STRING)
+    private FamilyRole familyRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder
+    public Test(Long id, Answer answer, FamilyRole familyRole, User user) {
+        this.id = id;
+        this.answer = answer;
+        this.familyRole = familyRole;
+        this.user = user;
+    }
 }

@@ -2,31 +2,41 @@ package sixgarlic.potenday.traveltype.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sixgarlic.potenday.user.model.User;
-import sixgarlic.potenday.travelroom.model.TravelRole;
+import sixgarlic.potenday.test.model.FamilyRole;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class MemberTravelType {
+public class UserTravelType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_type_id")
+    @Column(name = "user_type_id")
     private Long id;
 
-    private boolean is_default;
+    private boolean isDefault;
 
     @Enumerated(EnumType.STRING)
-    private TravelRole role;
+    private FamilyRole role;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id")
     private TravelType type;
+
+    @Builder
+    private UserTravelType(Long id, boolean isDefault, FamilyRole role, User user, TravelType type) {
+        this.id = id;
+        this.isDefault = isDefault;
+        this.role = role;
+        this.user = user;
+        this.type = type;
+    }
 }
