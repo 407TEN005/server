@@ -7,7 +7,7 @@ import sixgarlic.potenday.test.model.FamilyRole;
 import java.util.List;
 
 @Data
-public class TestRequestDto {
+public class TestDeriveRequest {
 
     private FamilyRole familyRole;
     private List<Answer> answers;

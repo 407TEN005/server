@@ -48,7 +48,8 @@ public class SecurityConfig {
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(
-                                new AntPathRequestMatcher("/oauth2/**")
+                                new AntPathRequestMatcher("/oauth2/**"),
+                                new AntPathRequestMatcher("/test-without-auth")
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

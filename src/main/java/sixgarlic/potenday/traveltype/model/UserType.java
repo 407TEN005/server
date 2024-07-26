@@ -5,13 +5,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.test.model.FamilyRole;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class UserTravelType {
+public class UserType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,16 +30,18 @@ public class UserTravelType {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_id")
-    private TravelType type;
+    @OneToMany(mappedBy = "userType", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Travel> travels;
+
+    @Enumerated(EnumType.STRING)
+    private TravelType travelType;
 
     @Builder
-    private UserTravelType(Long id, boolean isDefault, FamilyRole role, User user, TravelType type) {
+    private UserType(Long id, boolean isDefault, FamilyRole role, User user, TravelType travelType) {
         this.id = id;
         this.isDefault = isDefault;
         this.role = role;
         this.user = user;
-        this.type = type;
+        this.travelType = travelType;
     }
 }
