@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import sixgarlic.potenday.global.util.CookieUtil;
 import sixgarlic.potenday.global.util.JwtUtil;
 import sixgarlic.potenday.redis.service.RedisService;
+import sixgarlic.potenday.user.model.User;
+import sixgarlic.potenday.user.repository.UserRepository;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -24,6 +26,7 @@ public class CustomLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final RedisService redisService;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -44,6 +47,8 @@ public class CustomLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.addCookie(cookieUtil.createCookie("refreshToken", refreshToken, (int) Duration.ofDays(14).toSeconds()));
         response.setStatus(HttpServletResponse.SC_OK);
 
-        response.sendRedirect("http://223.130.131.205/oauth2/redirect?accessToken=" + accessToken);
+        Long id = userRepository.findByKakaoId(kakaoId).get().getId();
+
+        response.sendRedirect("http://potenday-sixgarlic.site/oauth2/redirect?accessToken=" + accessToken + "&userId=" + id);
     }
 }
