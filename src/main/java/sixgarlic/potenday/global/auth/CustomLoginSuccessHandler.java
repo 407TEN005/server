@@ -49,6 +49,6 @@ public class CustomLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         Long id = userRepository.findByKakaoId(kakaoId).get().getId();
 
-        response.sendRedirect("https://potenday-sixgarlic.site/oauth2/redirect?accessToken=" + accessToken + "&userId=" + id);
+        response.sendRedirect("https://tenten.potenday-sixgarlic.site/oauth2/redirect?accessToken=" + accessToken + "&userId=" + id);
     }
 }
