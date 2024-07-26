@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(
                                 new AntPathRequestMatcher("/oauth2/**"),
-                                new AntPathRequestMatcher("/test-without-auth")
+                                new AntPathRequestMatcher("/test-without-auth"),
                                 new AntPathRequestMatcher("/login/**"),
                                 new AntPathRequestMatcher("/")
                         ).permitAll()
