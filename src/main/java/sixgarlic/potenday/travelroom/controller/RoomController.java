@@ -36,9 +36,11 @@ public class RoomController {
     }
 
     @GetMapping("/users/{userId}/travel-rooms")
-    public ResponseEntity getAllTravelRooms(@PathVariable Long userId) {
+    public ResponseEntity getAllTravelRooms(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "desc") String sort) {
 
-        List<RoomResponse> rooms = roomService.getAllTravelRooms(userId);
+        List<RoomResponse> rooms = roomService.getAllTravelRooms(userId, sort);
 
         return ResponseEntity.ok(rooms);
 

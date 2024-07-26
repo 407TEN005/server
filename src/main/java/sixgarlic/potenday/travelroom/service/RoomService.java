@@ -2,6 +2,7 @@ package sixgarlic.potenday.travelroom.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sixgarlic.potenday.travelroom.dto.RoomCreateRequest;
@@ -80,9 +81,16 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    public List<RoomResponse> getAllTravelRooms(Long userId) {
+    public List<RoomResponse> getAllTravelRooms(Long userId, String sort) {
 
-        List<Room> rooms = roomRepository.findAllByUserId(userId);
+        Sort sortDirection = Sort.by("createdAt");
+        if ("desc".equalsIgnoreCase(sort)) {
+            sortDirection = sortDirection.descending();
+        } else {
+            sortDirection = sortDirection.ascending();
+        }
+
+        List<Room> rooms = roomRepository.findAllByUserId(userId, sortDirection);
 
 //        rooms.stream().forEach(room -> log.info(String.valueOf((long) room.getTravels().size())));
 
