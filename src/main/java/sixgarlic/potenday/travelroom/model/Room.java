@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sixgarlic.potenday.commandment.model.Commandment;
+import sixgarlic.potenday.global.common.BaseEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Room {
+public class Room extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
