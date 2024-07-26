@@ -1,12 +1,13 @@
 package sixgarlic.potenday.travelroom.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sixgarlic.potenday.test.model.FamilyRole;
-import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.traveltype.model.TravelType;
+import sixgarlic.potenday.traveltype.model.UserType;
+import sixgarlic.potenday.user.model.User;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,12 +25,25 @@ public class Travel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
-    private TravelRoom travelRoom;
+    @Setter
+    private Room room;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_id")
-    private TravelType travelType;
+    @JoinColumn(name = "user_type_id")
+    private UserType userType;
 
     @Enumerated(EnumType.STRING)
     private FamilyRole familyRole;
+
+    private boolean isAdmin;
+
+    @Builder
+    private Travel(Long id, User user, Room room, UserType userType, FamilyRole familyRole, boolean isAdmin) {
+        this.id = id;
+        this.user = user;
+        this.room = room;
+        this.userType = userType;
+        this.familyRole = familyRole;
+        this.isAdmin = isAdmin;
+    }
 }

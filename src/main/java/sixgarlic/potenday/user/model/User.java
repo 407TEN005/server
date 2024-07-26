@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sixgarlic.potenday.test.model.Test;
+import sixgarlic.potenday.travelroom.model.Travel;
+import sixgarlic.potenday.traveltype.model.UserType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +35,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> tests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserType> userTypes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Travel> travels = new ArrayList<>();
+
     @Builder
     public User(String kakaoId, String nickname, String authority, UserStatus status) {
+
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.authority = authority;

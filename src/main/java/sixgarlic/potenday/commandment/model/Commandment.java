@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import sixgarlic.potenday.travelroom.model.TravelRoom;
+import sixgarlic.potenday.travelroom.model.Room;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,5 +20,5 @@ public class Commandment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
-    private TravelRoom travelRoom;
+    private Room room;
 }

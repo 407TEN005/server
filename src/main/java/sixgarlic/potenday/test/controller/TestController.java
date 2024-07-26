@@ -3,29 +3,33 @@ package sixgarlic.potenday.test.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sixgarlic.potenday.test.dto.TestRequestDto;
+import sixgarlic.potenday.test.dto.TestResultResponse;
+import sixgarlic.potenday.test.dto.TestDeriveRequest;
 import sixgarlic.potenday.test.service.TestService;
-import sixgarlic.potenday.traveltype.dto.TravelTypeDto;
-import sixgarlic.potenday.traveltype.service.TravelTypeService;
-
-import java.util.List;
+import sixgarlic.potenday.traveltype.model.TravelType;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}/tests")
 public class TestController {
 
     private final TestService testService;
-    private final TravelTypeService travelTypeService;
 
-    @PostMapping
+    @PostMapping("/users/{userId}/tests")
     public ResponseEntity submitTestResults(
             @PathVariable Long userId,
-            @RequestBody TestRequestDto testRequestDto) {
+            @RequestBody TestDeriveRequest testDeriveRequest) {
 
-        testService.saveTestResults(userId, testRequestDto);
-        TravelTypeDto travelTypeDto = travelTypeService.deriveTravelType(userId, testRequestDto);
+        TravelType travelType = testService.submitTestResults(userId, testDeriveRequest);
 
-        return ResponseEntity.ok().body(travelTypeDto);
+        return ResponseEntity.ok(TestResultResponse.from(travelType));
     }
+
+    @PostMapping("/test-without-auth")
+    public ResponseEntity submitTestResults(@RequestBody TestDeriveRequest testDeriveRequest) {
+
+        TravelType travelType = testService.submitTestResults(testDeriveRequest);
+
+        return ResponseEntity.ok(TestResultResponse.from(travelType));
+    }
+
 }
