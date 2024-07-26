@@ -2,14 +2,17 @@ package sixgarlic.potenday.traveltype.service;
 
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import sixgarlic.potenday.test.dto.TestRequestDto;
+import sixgarlic.potenday.test.dto.TestDeriveRequest;
+import sixgarlic.potenday.test.dto.TestResultResponse;
 import sixgarlic.potenday.test.model.Answer;
 import sixgarlic.potenday.test.model.FamilyRole;
-import sixgarlic.potenday.traveltype.dto.TravelTypeDto;
+import sixgarlic.potenday.travelroom.model.Room;
+import sixgarlic.potenday.travelroom.model.Travel;
+import sixgarlic.potenday.travelroom.repository.RoomRepository;
+import sixgarlic.potenday.travelroom.repository.TravelRepository;
 import sixgarlic.potenday.traveltype.model.TravelType;
-import sixgarlic.potenday.traveltype.model.UserTravelType;
-import sixgarlic.potenday.traveltype.repository.TravelTypeRepository;
-import sixgarlic.potenday.traveltype.repository.UserTravelTypeRepository;
+import sixgarlic.potenday.traveltype.model.UserType;
+import sixgarlic.potenday.traveltype.repository.UserTypeRepository;
 import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.user.model.UserStatus;
 import sixgarlic.potenday.user.repository.UserRepository;
@@ -19,35 +22,55 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class TravelTypeService {
+public class UserTypeService {
 
-    private final TravelTypeRepository travelTypeRepository;
-    private final UserTravelTypeRepository userTravelTypeRepository;
+    private final UserTypeRepository userTypeRepository;
     private final UserRepository userRepository;
+    private final TravelRepository travelRepository;
+    private final RoomRepository roomRepository;
 
-    public TravelTypeDto deriveTravelType(Long userId, TestRequestDto testRequestDto) {
-        List<Answer> answers = testRequestDto.getAnswers();
-        FamilyRole familyRole = testRequestDto.getFamilyRole();
+    public TestResultResponse getTravelType(Long userId, Long roomId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+        Travel travel = travelRepository.findByUserAndRoom(user, room)
+                .orElseThrow(() -> new NoSuchElementException("유형을 찾을 수 없습니다."));
+        return TestResultResponse.from(travel.getUserType().getTravelType());
+    }
+
+    public TravelType deriveTravelType(Long userId, TestDeriveRequest testDeriveRequest) {
+        List<Answer> answers = testDeriveRequest.getAnswers();
+        FamilyRole familyRole = testDeriveRequest.getFamilyRole();
 
         double baseScore = calculateBaseScore(answers);
         double adjustedScore = applyWeightsAndAdjustments(baseScore, answers);
 
-        String travelTypeID = checkParentOrChild(familyRole) + classifyTravelType(adjustedScore);
-        TravelType travelType = travelTypeRepository.findById(travelTypeID)
-                .orElseThrow(NoSuchElementException::new);
+        TravelType travelType = TravelType.valueOf(checkParentOrChild(familyRole) + classifyTravelType(adjustedScore)) ;
 
         User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
-        UserTravelType userTravelType = UserTravelType.builder()
-                .type(travelType)
+        UserType userType = UserType.builder()
+                .travelType(travelType)
                 .isDefault(user.getStatus() == UserStatus.NEW)
                 .role(familyRole)
                 .user(user)
                 .build();
 
-        userTravelTypeRepository.save(userTravelType);
+        userTypeRepository.save(userType);
 
-        return TravelTypeDto.from(travelType);
+        return travelType;
+
+    }
+
+    public TravelType deriveTravelType(TestDeriveRequest testDeriveRequest) {
+        List<Answer> answers = testDeriveRequest.getAnswers();
+        FamilyRole familyRole = testDeriveRequest.getFamilyRole();
+
+        double baseScore = calculateBaseScore(answers);
+        double adjustedScore = applyWeightsAndAdjustments(baseScore, answers);
+
+        return TravelType.valueOf(checkParentOrChild(familyRole) + classifyTravelType(adjustedScore));
 
     }
 
