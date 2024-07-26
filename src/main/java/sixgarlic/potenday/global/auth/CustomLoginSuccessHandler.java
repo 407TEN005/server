@@ -44,6 +44,6 @@ public class CustomLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.addCookie(cookieUtil.createCookie("refreshToken", refreshToken, (int) Duration.ofDays(14).toSeconds()));
         response.setStatus(HttpServletResponse.SC_OK);
 
-        response.sendRedirect("http://localhost:3000/oauth2/redirect?accessToken=" + accessToken);
+        response.sendRedirect("http://223.130.131.205/oauth2/redirect?accessToken=" + accessToken);
     }
 }
