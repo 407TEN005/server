@@ -50,6 +50,8 @@ public class RoomService {
                 .familyRole(userType.getRole())
                 .isAdmin(true)
                 .build();
+
+        room.addTravel(travel);
         travelRepository.save(travel);
         return room.getId();
 
@@ -92,10 +94,12 @@ public class RoomService {
 
         List<Room> rooms = roomRepository.findAllByUserId(userId, sortDirection);
 
-//        rooms.stream().forEach(room -> log.info(String.valueOf((long) room.getTravels().size())));
-
         return rooms.stream()
-                .map(room -> RoomResponse.from(room))
+                .map(room -> {
+                    Travel adminTravel = travelRepository.findAdminTravelByRoomId(room.getId())
+                            .orElseThrow(() -> new NoSuchElementException("방장의 정보를 찾을 수 없습니다."));
+                    return RoomResponse.from(room, adminTravel.getUserType().getTravelType());
+                })
                 .collect(Collectors.toList());
 
     }
