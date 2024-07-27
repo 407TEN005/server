@@ -2,14 +2,14 @@ package sixgarlic.potenday.travelroom.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import sixgarlic.potenday.travelroom.model.Room;
 import sixgarlic.potenday.traveltype.model.TravelType;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
+@Slf4j
 public class RoomResponse {
 
     private Long id;
@@ -19,10 +19,10 @@ public class RoomResponse {
     private int headcount;
     private int maxHeadcount;
     private boolean existCommandments;
-//    private List<TravelType> travelTypes;
+    private TravelType travelType;
 
     @Builder
-    private RoomResponse(Long id, String roomName, LocalDate startDate, LocalDate endDate, int headcount, int maxHeadcount, boolean existCommandments) {
+    private RoomResponse(Long id, String roomName, LocalDate startDate, LocalDate endDate, int headcount, int maxHeadcount, boolean existCommandments, TravelType travelType) {
         this.id = id;
         this.roomName = roomName;
         this.startDate = startDate;
@@ -30,16 +30,10 @@ public class RoomResponse {
         this.headcount = headcount;
         this.maxHeadcount = maxHeadcount;
         this.existCommandments = existCommandments;
-//        this.travelTypes = travelTypes;
+        this.travelType = travelType;
     }
 
-    public static RoomResponse from(Room room) {
-
-//        List<TravelType> travelTypes = room.getTravels().stream()
-//                .map(travel -> travel.getUserType())
-//                .map(userType -> userType.getTravelType())
-//                .collect(Collectors.toList());
-
+    public static RoomResponse from(Room room, TravelType travelType) {
         return RoomResponse.builder()
                 .id(room.getId())
                 .roomName(room.getRoomName())
@@ -48,7 +42,7 @@ public class RoomResponse {
                 .headcount(room.getHeadcount())
                 .maxHeadcount(room.getMaxHeadcount())
                 .existCommandments(!room.getCommandments().isEmpty())
-//                .travelTypes(travelTypes)
+                .travelType(travelType)
                 .build();
     }
 }
