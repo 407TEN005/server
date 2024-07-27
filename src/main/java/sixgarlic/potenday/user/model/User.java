@@ -1,10 +1,7 @@
 package sixgarlic.potenday.user.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sixgarlic.potenday.test.model.Test;
 import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.traveltype.model.UserType;
@@ -30,6 +27,7 @@ public class User {
     private String authority;
 
     @Enumerated
+    @Setter
     private UserStatus status;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -42,8 +40,8 @@ public class User {
     private List<Travel> travels = new ArrayList<>();
 
     @Builder
-    public User(String kakaoId, String nickname, String authority, UserStatus status) {
-
+    public User(Long id, String kakaoId, String nickname, String authority, UserStatus status) {
+        this.id = id;
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.authority = authority;

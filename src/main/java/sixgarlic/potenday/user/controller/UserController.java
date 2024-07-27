@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sixgarlic.potenday.global.auth.CustomOAuth2User;
+import sixgarlic.potenday.user.dto.UserResponse;
 import sixgarlic.potenday.user.service.UserService;
 
 @RestController
@@ -16,9 +17,10 @@ public class UserController {
 
     private final UserService userService;
 
-//    @GetMapping("/current")
-//    public ResponseEntity findCurrentUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-//        String kakaoId = customOAuth2User.getKakaoId();
-//        userService.
-//    }
+    @GetMapping("/current")
+    public ResponseEntity findCurrentUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        String kakaoId = customOAuth2User.getKakaoId();
+        UserResponse userResponse = userService.findCurrentUser(kakaoId);
+        return ResponseEntity.ok(userResponse);
+    }
 }

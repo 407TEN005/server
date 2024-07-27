@@ -59,6 +59,9 @@ public class UserTypeService {
 
         userTypeRepository.save(userType);
 
+        user.setStatus(UserStatus.ACTIVE);
+        userRepository.save(user);
+
         return travelType;
 
     }
