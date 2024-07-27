@@ -56,4 +56,17 @@ public class Room extends BaseEntity {
         travels.add(travel);
         travel.setRoom(this);
     }
+
+    public void addCommandments(List<Commandment> commandments) {
+        for (Commandment commandment : commandments) {
+            this.commandments.add(commandment);
+            commandment.setRoom(this);
+        }
+    }
+
+    public void removeCommandments() {
+        if (!this.commandments.isEmpty()) {
+            this.commandments.clear();
+        }
+    }
 }
