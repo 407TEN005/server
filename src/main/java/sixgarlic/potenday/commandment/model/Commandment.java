@@ -1,9 +1,7 @@
 package sixgarlic.potenday.commandment.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sixgarlic.potenday.travelroom.model.Room;
 
 @Entity
@@ -20,5 +18,10 @@ public class Commandment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
+    @Setter
     private Room room;
+
+    public Commandment(String content) {
+        this.content = content;
+    }
 }
