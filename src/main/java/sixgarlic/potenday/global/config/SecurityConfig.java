@@ -58,6 +58,7 @@ public class SecurityConfig {
                         request.requestMatchers(
                                 new AntPathRequestMatcher("/oauth2/**"),
                                 new AntPathRequestMatcher("/test-without-auth"),
+                                new AntPathRequestMatcher("/derive-commandments-without-auth"),
                                 new AntPathRequestMatcher("/login/**"),
                                 new AntPathRequestMatcher("/")
                         ).permitAll()

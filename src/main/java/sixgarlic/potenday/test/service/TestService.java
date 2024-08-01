@@ -3,11 +3,13 @@ package sixgarlic.potenday.test.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sixgarlic.potenday.test.dto.TestDeriveRequest;
+import sixgarlic.potenday.test.dto.TestResultResponse;
 import sixgarlic.potenday.test.model.Answer;
 import sixgarlic.potenday.test.model.FamilyRole;
 import sixgarlic.potenday.test.model.Test;
 import sixgarlic.potenday.test.repository.TestRepository;
 import sixgarlic.potenday.traveltype.model.TravelType;
+import sixgarlic.potenday.traveltype.model.UserType;
 import sixgarlic.potenday.traveltype.service.UserTypeService;
 import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.user.repository.UserRepository;
@@ -22,24 +24,20 @@ public class TestService {
     private final TestRepository testRepository;
     private final UserRepository userRepository;
 
-    public TravelType submitTestResults(Long userId, TestDeriveRequest testDeriveRequest) {
+    public TestResultResponse submitTestResults(Long userId, TestDeriveRequest testDeriveRequest) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(NoSuchElementException::new);
-
-        FamilyRole familyRole = testDeriveRequest.getFamilyRole();
+        UserType userType = userTypeService.deriveTravelType(userId, testDeriveRequest);
 
         for (Answer answer : testDeriveRequest.getAnswers()) {
             Test test = Test.builder()
                     .answer(answer)
-                    .familyRole(familyRole)
-                    .user(user)
+                    .userType(userType)
                     .build();
 
             testRepository.save(test);
         }
 
-        return userTypeService.deriveTravelType(userId, testDeriveRequest);
+        return TestResultResponse.from(userType.getTravelType());
     }
 
     public TravelType submitTestResults(TestDeriveRequest testDeriveRequest) {

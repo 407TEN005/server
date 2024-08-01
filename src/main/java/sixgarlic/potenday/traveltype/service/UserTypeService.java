@@ -39,7 +39,7 @@ public class UserTypeService {
         return TestResultResponse.from(travel.getUserType().getTravelType());
     }
 
-    public TravelType deriveTravelType(Long userId, TestDeriveRequest testDeriveRequest) {
+    public UserType deriveTravelType(Long userId, TestDeriveRequest testDeriveRequest) {
         List<Answer> answers = testDeriveRequest.getAnswers();
         FamilyRole familyRole = testDeriveRequest.getFamilyRole();
 
@@ -62,7 +62,7 @@ public class UserTypeService {
         user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
-        return travelType;
+        return userType;
 
     }
 
