@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sixgarlic.potenday.traveltype.model.UserType;
 import sixgarlic.potenday.user.model.User;
 
 @Entity
@@ -20,18 +21,14 @@ public class Test {
     @Enumerated(EnumType.STRING)
     private Answer answer;
 
-    @Enumerated(EnumType.STRING)
-    private FamilyRole familyRole;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_type_id")
+    private UserType userType;
 
     @Builder
-    public Test(Long id, Answer answer, FamilyRole familyRole, User user) {
+    public Test(Long id, Answer answer, UserType userType) {
         this.id = id;
         this.answer = answer;
-        this.familyRole = familyRole;
-        this.user = user;
+        this.userType = userType;
     }
 }

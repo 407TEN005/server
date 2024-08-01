@@ -19,9 +19,9 @@ public class TestController {
             @PathVariable Long userId,
             @RequestBody TestDeriveRequest testDeriveRequest) {
 
-        TravelType travelType = testService.submitTestResults(userId, testDeriveRequest);
+        TestResultResponse testResultResponse = testService.submitTestResults(userId, testDeriveRequest);
 
-        return ResponseEntity.ok(TestResultResponse.from(travelType));
+        return ResponseEntity.ok(testResultResponse);
     }
 
     @PostMapping("/test-without-auth")

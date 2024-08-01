@@ -5,10 +5,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sixgarlic.potenday.test.model.Test;
 import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.test.model.FamilyRole;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,7 +33,10 @@ public class UserType {
     private User user;
 
     @OneToMany(mappedBy = "userType", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Travel> travels;
+    private List<Travel> travels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userType", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Test> tests = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private TravelType travelType;
