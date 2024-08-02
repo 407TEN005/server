@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sixgarlic.potenday.global.auth.CustomOAuth2User;
 import sixgarlic.potenday.travelroom.dto.RoomCreateRequest;
 import sixgarlic.potenday.travelroom.dto.RoomDetailResponse;
 import sixgarlic.potenday.travelroom.dto.RoomResponse;
@@ -58,11 +59,11 @@ public class RoomService {
     }
 
     @Transactional
-    public void joinTravelRoom(Long userId, Long roomId) {
-        User user = userRepository.findById(userId)
+    public void joinTravelRoom(CustomOAuth2User customOAuth2User, Long roomId) {
+        User user = userRepository.findByKakaoId(customOAuth2User.getKakaoId())
                 .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
 
-        UserType userType = userTypeRepository.findByUserIdAndIsDefault(userId, true)
+        UserType userType = userTypeRepository.findByUserIdAndIsDefault(user.getId(), true)
                 .orElseThrow(() -> new NoSuchElementException("여행 유형을 찾을 수 없습니다."));
 
         Room room = roomRepository.findById(roomId)
