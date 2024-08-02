@@ -114,7 +114,7 @@ public class CommandmentService {
             result += "자녀";
         }
 
-        result += "(" + targetTravelType + ")";
+        result += "(" + targetTravelType + ") \n이 데이터로 10개의 계명을 도출해줘.";
         return result;
     }
 

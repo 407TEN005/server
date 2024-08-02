@@ -2,8 +2,10 @@ package sixgarlic.potenday.travelroom.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import sixgarlic.potenday.global.auth.CustomOAuth2User;
 import sixgarlic.potenday.travelroom.dto.RoomCreateRequest;
 import sixgarlic.potenday.travelroom.dto.RoomDetailResponse;
 import sixgarlic.potenday.travelroom.dto.RoomResponse;
@@ -46,12 +48,12 @@ public class RoomController {
 
     }
 
-    @PostMapping("/users/{userId}/travel-rooms/{roomId}")
+    @PostMapping("/travel-rooms/{roomId}")
     public ResponseEntity joinTravelRoom(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @PathVariable Long roomId) {
 
-        roomService.joinTravelRoom(userId, roomId);
+        roomService.joinTravelRoom(customOAuth2User, roomId);
 
         return ResponseEntity.ok().build();
 
