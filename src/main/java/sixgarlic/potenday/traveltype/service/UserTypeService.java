@@ -1,7 +1,8 @@
 package sixgarlic.potenday.traveltype.service;
 
-import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sixgarlic.potenday.test.dto.TestDeriveRequest;
 import sixgarlic.potenday.test.dto.TestResultResponse;
 import sixgarlic.potenday.test.model.Answer;
@@ -22,6 +23,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserTypeService {
 
     private final UserTypeRepository userTypeRepository;
@@ -31,7 +33,7 @@ public class UserTypeService {
 
     public TestResultResponse getTravelType(Long userId, Long roomId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
         Travel travel = travelRepository.findByUserAndRoom(user, room)
@@ -39,7 +41,9 @@ public class UserTypeService {
         return TestResultResponse.from(travel.getUserType().getTravelType());
     }
 
-    public UserType deriveTravelType(Long userId, TestDeriveRequest testDeriveRequest) {
+    @Transactional
+    public UserType deriveTravelType(User user, TestDeriveRequest testDeriveRequest) {
+
         List<Answer> answers = testDeriveRequest.getAnswers();
         FamilyRole familyRole = testDeriveRequest.getFamilyRole();
 
@@ -47,8 +51,6 @@ public class UserTypeService {
         double adjustedScore = applyWeightsAndAdjustments(baseScore, answers);
 
         TravelType travelType = TravelType.valueOf(checkParentOrChild(familyRole) + classifyTravelType(adjustedScore)) ;
-
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
         UserType userType = UserType.builder()
                 .travelType(travelType)
@@ -67,6 +69,7 @@ public class UserTypeService {
     }
 
     public TravelType deriveTravelType(TestDeriveRequest testDeriveRequest) {
+
         List<Answer> answers = testDeriveRequest.getAnswers();
         FamilyRole familyRole = testDeriveRequest.getFamilyRole();
 

@@ -20,12 +20,14 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    @PostMapping("/users/{userId}/travel-rooms")
+    @PostMapping("/travel-rooms")
     public ResponseEntity createTravelRoom(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2User,
             @RequestBody RoomCreateRequest roomCreateRequest) {
 
-        Long id = roomService.createTravelRoom(userId, roomCreateRequest);
+        String kakaoId = oAuth2User.getKakaoId();
+
+        Long id = roomService.createTravelRoom(kakaoId, roomCreateRequest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/travel-rooms")
@@ -37,12 +39,14 @@ public class RoomController {
 
     }
 
-    @GetMapping("/users/{userId}/travel-rooms")
+    @GetMapping("/travel-rooms")
     public ResponseEntity getAllTravelRooms(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
             @RequestParam(defaultValue = "desc") String sort) {
 
-        List<RoomResponse> rooms = roomService.getAllTravelRooms(userId, sort);
+        String kakaoId = customOAuth2User.getKakaoId();
+
+        List<RoomResponse> rooms = roomService.getAllTravelRooms(kakaoId, sort);
 
         return ResponseEntity.ok(rooms);
 

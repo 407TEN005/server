@@ -6,21 +6,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import sixgarlic.potenday.commandment.dto.ClovaRequestDto;
 import sixgarlic.potenday.commandment.dto.CommandmentRequest;
-import sixgarlic.potenday.commandment.dto.CommandmentSaveRequest;
 import sixgarlic.potenday.commandment.dto.Message;
 import sixgarlic.potenday.commandment.model.Commandment;
+import sixgarlic.potenday.global.auth.CustomOAuth2User;
 import sixgarlic.potenday.global.common.SystemPrompt;
 import sixgarlic.potenday.test.model.FamilyRole;
 import sixgarlic.potenday.test.model.Test;
 import sixgarlic.potenday.travelroom.model.Room;
+import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.travelroom.repository.RoomRepository;
+import sixgarlic.potenday.travelroom.repository.TravelRepository;
 import sixgarlic.potenday.traveltype.model.TravelType;
+import sixgarlic.potenday.user.model.User;
+import sixgarlic.potenday.user.repository.UserRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,14 +42,13 @@ public class CommandmentService {
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeaders;
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
+    private final TravelRepository travelRepository;
 
     @Transactional
-    public void saveCommandments(Long roomId, CommandmentSaveRequest commandmentSaveRequest) {
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new NoSuchElementException("여행방을 찾을 수 없습니다."));
+    public void saveCommandments(Room room, List<String> contents) {
 
         room.removeCommandments();
-
-        List<String> contents = commandmentSaveRequest.getCommandments();
 
         List<Commandment> commandments = contents.stream()
                 .map(content -> new Commandment(content))
@@ -54,11 +59,58 @@ public class CommandmentService {
         roomRepository.save(room);
     }
 
-//    public void reqeustClovaX(Long roomId) {
-//        HttpHeaders httpHeaders = SetHttpHeaders();
-//
-//    }
+    /**
+     * 여행방 내 구성원들의 성향 및 유형으로 클로바에게 요청하는 메서드
+     * @param customOAuth2User
+     * @param roomId
+     * @return
+     */
+    @Transactional
+    public List<String> requestClovaX(CustomOAuth2User customOAuth2User, Long roomId) {
 
+        User user = userRepository.findByKakaoId(customOAuth2User.getKakaoId())
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new NoSuchElementException("여행방을 찾을 수 없습니다."));
+
+        Travel travel = travelRepository.findByUserAndRoom(user, room)
+                .orElseThrow(() -> new NoSuchElementException("여행 정보를 찾을 수 없습니다."));
+
+        if (!travel.isAdmin()) {
+            throw new AccessDeniedException("방을 생성할 권한이 없습니다.");
+        }
+
+        Message systemMessage = new Message("system", SystemPrompt.SYSTEM_PROMPT);
+        Message userMessage = new Message("user", deriveUserPrompt(room));
+
+        ClovaRequestDto clovaRequestDto = new ClovaRequestDto(List.of(systemMessage, userMessage));
+
+        HttpEntity httpEntity = new HttpEntity(clovaRequestDto, httpHeaders);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                String responseBody = response.getBody();
+                List<String> commandments = extractCommandment(responseBody);
+                saveCommandments(room, commandments);
+                return commandments;
+            } else {
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+            }
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("HTTP request failed : " + e.getStatusCode() + " " + e.getResponseBodyAsString());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error parsing JSON response: " + e.getMessage(), e);
+        }
+
+    }
+
+    /**
+     * 비 로그인시 테스트의 결과로 클로버에게 요청하는 메서드
+     * @param commandmentRequest
+     * @return
+     */
     public List<String> requestClovaX(CommandmentRequest commandmentRequest) {
         Message system = new Message("system", SystemPrompt.SYSTEM_PROMPT);
         Message user = new Message("user", deriveUserPrompt(commandmentRequest));
@@ -114,13 +166,11 @@ public class CommandmentService {
             result += "자녀";
         }
 
-        result += "(" + targetTravelType + ") \n이 데이터로 10개의 계명을 도출해줘.";
+        result += "(" + targetTravelType + ")";
         return result;
     }
 
-    public String deriveUserPrompt(Long roomId) {
-
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new NoSuchElementException("여행방을 찾을 수 없습니다."));
+    private String deriveUserPrompt(Room room) {
 
         StringBuilder stringBuilder = new StringBuilder();
         room.getTravels().stream()
@@ -135,8 +185,7 @@ public class CommandmentService {
                     }
                     stringBuilder.append(") ");
                 });
-        String result = stringBuilder.toString();
-        return result;
+        return stringBuilder.toString();
     }
 
 }

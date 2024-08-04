@@ -34,12 +34,12 @@ public class RoomService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long createTravelRoom(Long userId, RoomCreateRequest roomCreateRequest) {
+    public Long createTravelRoom(String kakaoId, RoomCreateRequest roomCreateRequest) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
 
-        UserType userType = userTypeRepository.findByUserIdAndIsDefault(userId, true)
+        UserType userType = userTypeRepository.findByUserIdAndIsDefault(user.getId(), true)
                 .orElseThrow(() -> new NoSuchElementException("여행 유형을 찾을 수 없습니다."));
 
         Room room = roomRepository.save(roomCreateRequest.toTravelRoom());
@@ -60,6 +60,7 @@ public class RoomService {
 
     @Transactional
     public void joinTravelRoom(CustomOAuth2User customOAuth2User, Long roomId) {
+
         User user = userRepository.findByKakaoId(customOAuth2User.getKakaoId())
                 .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
 
@@ -84,7 +85,10 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    public List<RoomResponse> getAllTravelRooms(Long userId, String sort) {
+    public List<RoomResponse> getAllTravelRooms(String kakaoId, String sort) {
+
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
 
         Sort sortDirection = Sort.by("createdAt");
         if ("desc".equalsIgnoreCase(sort)) {
@@ -93,7 +97,7 @@ public class RoomService {
             sortDirection = sortDirection.ascending();
         }
 
-        List<Room> rooms = roomRepository.findAllByUserId(userId, sortDirection);
+        List<Room> rooms = roomRepository.findAllByUserId(user.getId(), sortDirection);
 
         return rooms.stream()
                 .map(room -> {

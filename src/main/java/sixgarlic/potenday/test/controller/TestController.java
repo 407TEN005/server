@@ -2,7 +2,9 @@ package sixgarlic.potenday.test.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import sixgarlic.potenday.global.auth.CustomOAuth2User;
 import sixgarlic.potenday.test.dto.TestResultResponse;
 import sixgarlic.potenday.test.dto.TestDeriveRequest;
 import sixgarlic.potenday.test.service.TestService;
@@ -14,12 +16,14 @@ public class TestController {
 
     private final TestService testService;
 
-    @PostMapping("/users/{userId}/tests")
+    @PostMapping("/tests")
     public ResponseEntity submitTestResults(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2User,
             @RequestBody TestDeriveRequest testDeriveRequest) {
 
-        TestResultResponse testResultResponse = testService.submitTestResults(userId, testDeriveRequest);
+        String kakaoId = oAuth2User.getKakaoId();
+
+        TestResultResponse testResultResponse = testService.submitTestResults(kakaoId, testDeriveRequest);
 
         return ResponseEntity.ok(testResultResponse);
     }
@@ -27,9 +31,9 @@ public class TestController {
     @PostMapping("/test-without-auth")
     public ResponseEntity submitTestResults(@RequestBody TestDeriveRequest testDeriveRequest) {
 
-        TravelType travelType = testService.submitTestResults(testDeriveRequest);
+        TestResultResponse testResultResponse = testService.submitTestResults(testDeriveRequest);
 
-        return ResponseEntity.ok(TestResultResponse.from(travelType));
+        return ResponseEntity.ok(testResultResponse);
     }
 
 }
