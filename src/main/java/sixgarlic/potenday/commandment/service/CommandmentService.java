@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class CommandmentService {
 
 
-    private final String url = "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-DASH-001";
+    private final String url = "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003";
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeaders;
     private final RoomRepository roomRepository;
@@ -166,7 +166,7 @@ public class CommandmentService {
             result += "자녀";
         }
 
-        result += "(" + targetTravelType + ") \n이 데이터로 10개의 계명을 도출해줘.";
+        result += "(" + targetTravelType + ")";
         return result;
     }
 
@@ -185,8 +185,7 @@ public class CommandmentService {
                     }
                     stringBuilder.append(") ");
                 });
-        String result = stringBuilder.append("\n이 데이터로 10개의 계명을 도출해줘.").toString();
-        return result;
+        return stringBuilder.toString();
     }
 
 }
