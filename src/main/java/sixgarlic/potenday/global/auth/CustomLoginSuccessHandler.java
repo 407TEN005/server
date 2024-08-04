@@ -26,7 +26,6 @@ public class CustomLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final RedisService redisService;
-    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -47,8 +46,6 @@ public class CustomLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.addCookie(cookieUtil.createCookie("refreshToken", refreshToken, (int) Duration.ofDays(14).toSeconds()));
         response.setStatus(HttpServletResponse.SC_OK);
 
-        Long id = userRepository.findByKakaoId(kakaoId).get().getId();
-
-        response.sendRedirect("https://tenten.potenday-sixgarlic.site/oauth2/redirect?accessToken=" + accessToken + "&userId=" + id);
+        response.sendRedirect("https://tenten.potenday-sixgarlic.site/oauth2/redirect?accessToken=" + accessToken);
     }
 }
