@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import sixgarlic.potenday.test.dto.TestDeriveRequest;
 import sixgarlic.potenday.test.dto.TestResultResponse;
 import sixgarlic.potenday.test.model.Answer;
-import sixgarlic.potenday.test.model.FamilyRole;
 import sixgarlic.potenday.test.model.Test;
 import sixgarlic.potenday.test.repository.TestRepository;
 import sixgarlic.potenday.traveltype.model.TravelType;
@@ -24,9 +23,12 @@ public class TestService {
     private final TestRepository testRepository;
     private final UserRepository userRepository;
 
-    public TestResultResponse submitTestResults(Long userId, TestDeriveRequest testDeriveRequest) {
+    public TestResultResponse submitTestResults(String kakaoId, TestDeriveRequest testDeriveRequest) {
 
-        UserType userType = userTypeService.deriveTravelType(userId, testDeriveRequest);
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
+
+        UserType userType = userTypeService.deriveTravelType(user, testDeriveRequest);
 
         for (Answer answer : testDeriveRequest.getAnswers()) {
             Test test = Test.builder()
@@ -40,7 +42,10 @@ public class TestService {
         return TestResultResponse.from(userType.getTravelType());
     }
 
-    public TravelType submitTestResults(TestDeriveRequest testDeriveRequest) {
-        return userTypeService.deriveTravelType(testDeriveRequest);
+    public TestResultResponse submitTestResults(TestDeriveRequest testDeriveRequest) {
+
+        TravelType travelType = userTypeService.deriveTravelType(testDeriveRequest);
+
+        return TestResultResponse.from(travelType);
     }
 }

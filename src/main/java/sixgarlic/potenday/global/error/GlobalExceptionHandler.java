@@ -13,13 +13,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleAccessDeniedException(AccessDeniedException e) {
-        return e.getMessage();
+    public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
+        return ErrorResponse.error(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleNoSuchElementException(NoSuchElementException e) {
-        return e.getMessage();
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNoSuchElementException(NoSuchElementException e) {
+        return ErrorResponse.error(HttpStatus.NOT_FOUND, e.getMessage());
     }
 }

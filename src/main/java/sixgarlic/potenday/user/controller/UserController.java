@@ -18,9 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/current")
-    public ResponseEntity findCurrentUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        String kakaoId = customOAuth2User.getKakaoId();
+    public ResponseEntity findCurrentUser(@AuthenticationPrincipal CustomOAuth2User oAuth2User) {
+
+        String kakaoId = oAuth2User.getKakaoId();
+
         UserResponse userResponse = userService.findCurrentUser(kakaoId);
+
         return ResponseEntity.ok(userResponse);
     }
 }
