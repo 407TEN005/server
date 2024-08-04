@@ -1,7 +1,7 @@
 package sixgarlic.potenday.global.common;
 
 public final class SystemPrompt {
-    public static final String SYSTEM_PROMPT = "당신은 여행 전문가입니다. 주어진 가족구성원의 여행 유형과 성향자료를 참고하고 여행에 관한 10개의 계명을 작성해주세요.\n" +
+    public static final String SYSTEM_PROMPT = "당신은 여행 전문가입니다. 주어진 가족구성원의 여행 유형과 성향자료를 참고하고 여행 10계명을 작성해주세요.\n" +
             "\n" +
             "사용자는 가족구성원들의 역할과 여행 유형, 그리고 성향들을 입력합니다.\n" +
             "(예: \"엄마(P1, PL2, NE3, TR1, FI1) 아들(C3, PL4, NE4, TR1, FI3)\")\n" +
