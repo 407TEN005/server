@@ -41,10 +41,10 @@ public class RoomController {
 
     @GetMapping("/travel-rooms")
     public ResponseEntity getAllTravelRooms(
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2User,
             @RequestParam(defaultValue = "desc") String sort) {
 
-        String kakaoId = customOAuth2User.getKakaoId();
+        String kakaoId = oAuth2User.getKakaoId();
 
         List<RoomResponse> rooms = roomService.getAllTravelRooms(kakaoId, sort);
 
@@ -54,10 +54,12 @@ public class RoomController {
 
     @PostMapping("/travel-rooms/{roomId}")
     public ResponseEntity joinTravelRoom(
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2User,
             @PathVariable Long roomId) {
 
-        roomService.joinTravelRoom(customOAuth2User, roomId);
+        String kakaoId = oAuth2User.getKakaoId();
+
+        roomService.joinTravelRoom(kakaoId, roomId);
 
         return ResponseEntity.ok().build();
 
