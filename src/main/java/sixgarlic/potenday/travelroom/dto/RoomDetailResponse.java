@@ -2,6 +2,7 @@ package sixgarlic.potenday.travelroom.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import sixgarlic.potenday.test.model.FamilyRole;
 import sixgarlic.potenday.travelroom.model.Room;
 import sixgarlic.potenday.traveltype.model.TravelType;
 import sixgarlic.potenday.traveltype.model.UserType;
@@ -66,18 +67,21 @@ public class RoomDetailResponse {
 
         private Long id;
         private TravelType travelType;
+        private FamilyRole familyRole;
         private boolean isAdmin;
 
         @Builder
-        private UserInfo(Long id, TravelType travelType, boolean isAdmin) {
+        private UserInfo(Long id, TravelType travelType, FamilyRole familyRole, boolean isAdmin) {
             this.id = id;
             this.travelType = travelType;
+            this.familyRole = familyRole;
             this.isAdmin = isAdmin;
         }
 
         public static UserInfo from(UserType userType, boolean isAdmin) {
             return UserInfo.builder()
                     .travelType(userType.getTravelType())
+                    .familyRole(userType.getRole())
                     .id(userType.getUser().getId())
                     .isAdmin(isAdmin)
                     .build();
