@@ -3,6 +3,7 @@ package sixgarlic.potenday.travelroom.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sixgarlic.potenday.travelroom.dto.RoomCreateRequest;
@@ -38,8 +39,10 @@ public class RoomService {
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
 
-        UserType userType = userTypeRepository.findByUserIdAndIsDefault(user.getId(), true)
-                .orElseThrow(() -> new NoSuchElementException("여행 유형을 찾을 수 없습니다."));
+        UserType userType = user.getUserTypes().stream()
+                .filter(type -> type.isDefault())
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("디폴트 여행 유형을 찾을 수 없습니다."));
 
         Room room = roomRepository.save(roomCreateRequest.toTravelRoom());
 
@@ -107,9 +110,21 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
-    public RoomDetailResponse getRoomDetail(Long roomId) {
+    public RoomDetailResponse getRoomDetail(String kakaoId, Long roomId) {
+
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
+
         Room room = roomRepository.findByRoomId(roomId)
                 .orElseThrow(() -> new NoSuchElementException("해당 여방행 정보가 없습니다."));
+
+        boolean anyMatch = room.getTravels().stream()
+                .anyMatch(travel -> travel.getUser().equals(user));
+
+        if (!anyMatch) {
+            throw new AccessDeniedException("여행방을 조회할 권한이 없습니다.");
+        }
+
         return RoomDetailResponse.from(room);
     }
 }
