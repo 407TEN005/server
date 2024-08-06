@@ -65,9 +65,13 @@ public class RoomController {
     }
 
     @GetMapping("/travel-rooms/{roomId}")
-    public ResponseEntity getRoomDetail(@PathVariable Long roomId) {
+    public ResponseEntity getRoomDetail(
+            @AuthenticationPrincipal CustomOAuth2User oAuth2User,
+            @PathVariable Long roomId) {
 
-        RoomDetailResponse roomDetailResponse = roomService.getRoomDetail(roomId);
+        String KakaoId = oAuth2User.getKakaoId();
+
+        RoomDetailResponse roomDetailResponse = roomService.getRoomDetail(KakaoId, roomId);
 
         return ResponseEntity.ok(roomDetailResponse);
     }
