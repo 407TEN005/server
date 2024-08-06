@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sixgarlic.potenday.travelroom.dto.RoomCreateRequest;
 import sixgarlic.potenday.travelroom.dto.RoomDetailResponse;
 import sixgarlic.potenday.travelroom.dto.RoomResponse;
+import sixgarlic.potenday.travelroom.exception.UserAlreadyExistException;
 import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.travelroom.model.Room;
 import sixgarlic.potenday.travelroom.repository.TravelRepository;
@@ -79,7 +80,7 @@ public class RoomService {
                 .anyMatch(travel -> travel.getUser().equals(user));
 
         if (alreadyExist) {
-            return;
+            throw new UserAlreadyExistException("이미 여행방에 입장한 유저입니다.");
         }
 
         if (room.getMaxHeadcount() <= room.getHeadcount()) {
