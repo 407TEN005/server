@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sixgarlic.potenday.travelroom.dto.RoomCreateRequest;
 import sixgarlic.potenday.travelroom.dto.RoomDetailResponse;
 import sixgarlic.potenday.travelroom.dto.RoomResponse;
+import sixgarlic.potenday.travelroom.exception.UserAlreadyExistException;
 import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.travelroom.model.Room;
 import sixgarlic.potenday.travelroom.repository.TravelRepository;
@@ -66,11 +67,25 @@ public class RoomService {
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
 
-        UserType userType = userTypeRepository.findByUserIdAndIsDefault(user.getId(), true)
-                .orElseThrow(() -> new NoSuchElementException("여행 유형을 찾을 수 없습니다."));
+
+        UserType userType = user.getUserTypes().stream()
+                .filter(type -> type.isDefault())
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("디폴트 여행 유형을 찾을 수 없습니다."));
 
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new NoSuchElementException("여행방을 찾을 수 없습니다."));
+
+        boolean alreadyExist = room.getTravels().stream()
+                .anyMatch(travel -> travel.getUser().equals(user));
+
+        if (alreadyExist) {
+            throw new UserAlreadyExistException("이미 여행방에 입장한 유저입니다.");
+        }
+
+        if (room.getMaxHeadcount() <= room.getHeadcount()) {
+            throw new AccessDeniedException("여행방의 인원수가 가득찼습니다.");
+        }
 
         room.addHeadcount();
 

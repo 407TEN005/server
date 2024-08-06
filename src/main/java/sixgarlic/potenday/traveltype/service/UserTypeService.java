@@ -52,9 +52,16 @@ public class UserTypeService {
 
         TravelType travelType = TravelType.valueOf(checkParentOrChild(familyRole) + classifyTravelType(adjustedScore)) ;
 
+        if (user.getStatus() == UserStatus.ACTIVE) {
+            user.getUserTypes().stream()
+                    .filter(userType -> userType.isDefault())
+                    .findFirst()
+                    .ifPresent(userType -> userType.setDefault(false));
+        }
+
         UserType userType = UserType.builder()
                 .travelType(travelType)
-                .isDefault(user.getStatus() == UserStatus.NEW)
+                .isDefault(true)
                 .role(familyRole)
                 .user(user)
                 .build();

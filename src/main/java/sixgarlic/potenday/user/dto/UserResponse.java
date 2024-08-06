@@ -7,6 +7,7 @@ import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.user.model.UserStatus;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -18,23 +19,25 @@ public class UserResponse {
     private String nickname;
     private String authority;
     private UserStatus status;
-    private List<TravelType> travelTypes;
+    private TravelType travelType;
 
     @Builder
-    private UserResponse(Long id, String kakaoId, String nickname, String authority, UserStatus status, List<TravelType> travelTypes) {
+    private UserResponse(Long id, String kakaoId, String nickname, String authority, UserStatus status, TravelType travelType) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.authority = authority;
         this.status = status;
-        this.travelTypes = travelTypes;
+        this.travelType = travelType;
     }
 
     public static UserResponse from(User user) {
 
-        List<TravelType> travelTypes = user.getUserTypes().stream()
+        TravelType travelType = user.getUserTypes().stream()
+                .filter(userType -> userType.isDefault())
+                .findFirst()
                 .map(userType -> userType.getTravelType())
-                .collect(Collectors.toList());
+                .orElse(null);
 
         return UserResponse.builder()
                 .id(user.getId())
@@ -42,7 +45,7 @@ public class UserResponse {
                 .nickname(user.getNickname())
                 .authority(user.getAuthority())
                 .status(user.getStatus())
-                .travelTypes(travelTypes)
+                .travelType(travelType)
                 .build();
     }
 }

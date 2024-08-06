@@ -1,10 +1,7 @@
 package sixgarlic.potenday.traveltype.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sixgarlic.potenday.test.model.Test;
 import sixgarlic.potenday.travelroom.model.Travel;
 import sixgarlic.potenday.user.model.User;
@@ -23,6 +20,7 @@ public class UserType {
     @Column(name = "user_type_id")
     private Long id;
 
+    @Setter
     private boolean isDefault;
 
     @Enumerated(EnumType.STRING)
