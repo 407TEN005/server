@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import sixgarlic.potenday.travelroom.model.Room;
-import sixgarlic.potenday.traveltype.model.TravelType;
 
 import java.time.LocalDate;
 
@@ -19,10 +18,10 @@ public class RoomResponse {
     private int headcount;
     private int maxHeadcount;
     private boolean existCommandments;
-    private TravelType travelType;
+    private boolean isAdmin;
 
     @Builder
-    private RoomResponse(Long id, String roomName, LocalDate startDate, LocalDate endDate, int headcount, int maxHeadcount, boolean existCommandments, TravelType travelType) {
+    private RoomResponse(Long id, String roomName, LocalDate startDate, LocalDate endDate, int headcount, int maxHeadcount, boolean existCommandments, boolean isAdmin) {
         this.id = id;
         this.roomName = roomName;
         this.startDate = startDate;
@@ -30,10 +29,10 @@ public class RoomResponse {
         this.headcount = headcount;
         this.maxHeadcount = maxHeadcount;
         this.existCommandments = existCommandments;
-        this.travelType = travelType;
+        this.isAdmin = isAdmin;
     }
 
-    public static RoomResponse from(Room room, TravelType travelType) {
+    public static RoomResponse from(Room room, boolean isAdmin) {
         return RoomResponse.builder()
                 .id(room.getId())
                 .roomName(room.getRoomName())
@@ -42,7 +41,7 @@ public class RoomResponse {
                 .headcount(room.getHeadcount())
                 .maxHeadcount(room.getMaxHeadcount())
                 .existCommandments(!room.getCommandments().isEmpty())
-                .travelType(travelType)
+                .isAdmin(isAdmin)
                 .build();
     }
 }

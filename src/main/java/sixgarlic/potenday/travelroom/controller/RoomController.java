@@ -12,7 +12,9 @@ import sixgarlic.potenday.travelroom.dto.RoomResponse;
 import sixgarlic.potenday.travelroom.service.RoomService;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,13 +31,10 @@ public class RoomController {
 
         Long id = roomService.createTravelRoom(kakaoId, roomCreateRequest);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/travel-rooms")
-                .path("/{id}")
-                .buildAndExpand(id)
-                .toUri();
+        Map<String, Long> response = new HashMap<>();
+        response.put("roomId", id);
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.ok(response);
 
     }
 
