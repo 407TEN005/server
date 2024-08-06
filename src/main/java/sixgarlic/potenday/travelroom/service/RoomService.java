@@ -66,11 +66,25 @@ public class RoomService {
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
 
-        UserType userType = userTypeRepository.findByUserIdAndIsDefault(user.getId(), true)
-                .orElseThrow(() -> new NoSuchElementException("여행 유형을 찾을 수 없습니다."));
+
+        UserType userType = user.getUserTypes().stream()
+                .filter(type -> type.isDefault())
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("디폴트 여행 유형을 찾을 수 없습니다."));
 
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new NoSuchElementException("여행방을 찾을 수 없습니다."));
+
+        boolean alreadyExist = room.getTravels().stream()
+                .anyMatch(travel -> travel.getUser().equals(user));
+
+        if (alreadyExist) {
+            return;
+        }
+
+        if (room.getMaxHeadcount() <= room.getHeadcount()) {
+            throw new AccessDeniedException("여행방의 인원수가 가득찼습니다.");
+        }
 
         room.addHeadcount();
 
