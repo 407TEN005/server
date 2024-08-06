@@ -100,12 +100,11 @@ public class RoomService {
 
         return rooms.stream()
                 .map(room -> {
-                    Travel adminTravel = travelRepository.findAdminTravelByRoomId(room.getId())
-                            .orElseThrow(() -> new NoSuchElementException("방장의 정보를 찾을 수 없습니다."));
-                    return RoomResponse.from(room, adminTravel.getUserType().getTravelType());
+                    Travel travel = travelRepository.findByUserAndRoom(user, room)
+                            .orElseThrow(() -> new NoSuchElementException("여행 정보를 찾을 수 없습니다."));
+                    return RoomResponse.from(room, travel.isAdmin());
                 })
                 .collect(Collectors.toList());
-
     }
 
     public RoomDetailResponse getRoomDetail(Long roomId) {
