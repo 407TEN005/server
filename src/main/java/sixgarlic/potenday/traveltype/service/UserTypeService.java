@@ -240,4 +240,17 @@ public class UserTypeService {
             return "C";
         }
     }
+
+    public TestResultResponse getDefaultTravelType(String kakaoId) {
+
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+
+        UserType userType = user.getUserTypes().stream()
+                .filter(type -> type.isDefault())
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("디폴트 유형을 찾을 수 없습니다."));
+
+        return TestResultResponse.from(userType.getTravelType());
+    }
 }
