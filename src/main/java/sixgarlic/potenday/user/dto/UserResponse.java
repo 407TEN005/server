@@ -2,6 +2,7 @@ package sixgarlic.potenday.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import sixgarlic.potenday.test.model.FamilyRole;
 import sixgarlic.potenday.traveltype.model.TravelType;
 import sixgarlic.potenday.user.model.User;
 import sixgarlic.potenday.user.model.UserStatus;
@@ -20,15 +21,17 @@ public class UserResponse {
     private String authority;
     private UserStatus status;
     private TravelType travelType;
+    private String familyRole;
 
     @Builder
-    private UserResponse(Long id, String kakaoId, String nickname, String authority, UserStatus status, TravelType travelType) {
+    private UserResponse(Long id, String kakaoId, String nickname, String authority, UserStatus status, TravelType travelType, String familyRole) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.authority = authority;
         this.status = status;
         this.travelType = travelType;
+        this.familyRole = familyRole;
     }
 
     public static UserResponse from(User user) {
@@ -39,6 +42,12 @@ public class UserResponse {
                 .map(userType -> userType.getTravelType())
                 .orElse(null);
 
+        String role = user.getUserTypes().stream()
+                .filter(userType -> userType.isDefault())
+                .findFirst()
+                .map(userType -> userType.getRole().getRole())
+                .orElse(null);
+
         return UserResponse.builder()
                 .id(user.getId())
                 .kakaoId(user.getKakaoId())
@@ -46,6 +55,7 @@ public class UserResponse {
                 .authority(user.getAuthority())
                 .status(user.getStatus())
                 .travelType(travelType)
+                .familyRole(role)
                 .build();
     }
 }
