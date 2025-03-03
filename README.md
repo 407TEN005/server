@@ -64,6 +64,8 @@
 | C5 | **균형 잡힌 협력 자녀**(중재의 달인 외교관 꿈나무) | 제한적 타협 시도 | 약간 도전적 | 조금 즉흥형 | 자녀 의견 조금 우선 |
 | C6 | **꼼꼼한 실속 자녀**(꼼꼼 실속 가성비 전문가) | 실망감 표현 | 약간 소극적 | 조금 계획형 | 부모 의견 조금 우선 |
 
+<br><br>
+
 ## ❗️ 기술적 의사결정 및 트러블슈팅
-- 여행 성향 도출 알고리즘 설계 및 구현
-- 여행 10계명 도출 프롬프트 최적화 및 Hyper Clova X 응답 품질 개선
+- [여행 성향 도출 알고리즘 설계 및 구현](https://github.com/407TEN005/server/wiki/%EC%97%AC%ED%96%89-%EC%84%B1%ED%96%A5-%EB%8F%84%EC%B6%9C-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-%EC%84%A4%EA%B3%84-%EB%B0%8F-%EA%B5%AC%ED%98%84)
+- [여행 10계명 도출 프롬프트 최적화 및 Hyper Clova X 응답 품질 개선](https://github.com/407TEN005/server/wiki/%EC%97%AC%ED%96%89-10%EA%B3%84%EB%AA%85-%EB%8F%84%EC%B6%9C-%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B0%8F-Hyper-Clova-X-%EC%9D%91%EB%8B%B5-%ED%92%88%EC%A7%88-%EA%B0%9C%EC%84%A0)
